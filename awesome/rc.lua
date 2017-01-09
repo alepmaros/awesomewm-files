@@ -119,6 +119,24 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- Keyboard map indicator and switcher
 mykeyboardlayout = awful.widget.keyboardlayout()
 
+--- {{{ Naughty
+
+
+-- Disable spotify notifications.
+naughty.config.presets.spotify = { 
+    -- if you want to disable Spotify notifications completely, return false
+    callback = function(args)
+        return true
+    end,
+
+    -- Adjust the size of the notification
+    height = 100,
+    width  = 400
+}
+table.insert(naughty.dbus.config.mapping, {{appname = "Spotify"}, naughty.config.presets.spotify})
+
+-- }}}
+
 -- {{{ Wibar
 
 markup = lain.util.markup
@@ -391,7 +409,11 @@ globalkeys = awful.util.table.join(
               {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"})
+              {description = "show the menubar", group = "launcher"}),
+
+    -- Custom Key Bindings
+    -- Screenshot
+    awful.key({ }, "Print", function () awful.util.spawn("scrot -e 'mv $f ~/screenshots/ 2>/dev/null'") end)
 )
 
 clientkeys = awful.util.table.join(
