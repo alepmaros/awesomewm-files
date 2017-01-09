@@ -122,7 +122,7 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 --- {{{ Naughty
 
 
--- Disable spotify notifications.
+-- Changing spotify notifications.
 naughty.config.presets.spotify = { 
     -- if you want to disable Spotify notifications completely, return false
     callback = function(args)
