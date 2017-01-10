@@ -162,14 +162,7 @@ mybattery = lain.widgets.abase({
         for k, v in string.gmatch(output, '([%a]+[%s|-|%a+]+):%s*([%a|%d]+[,|%a|%d|]*).-\n') do
             if     k == "present"       then bat_now.present      = v
             elseif k == "state"         then bat_now.state        = v
-            elseif k == "warning-level" then bat_now.warninglevel = v
-            elseif k == "energy"        then bat_now.energy       = string.gsub(v, ",", ".") -- Wh
-            elseif k == "energy-full"   then bat_now.energyfull   = string.gsub(v, ",", ".") -- Wh
-            elseif k == "energy-rate"   then bat_now.energyrate   = string.gsub(v, ",", ".") -- W
-            elseif k == "voltage"       then bat_now.voltage      = string.gsub(v, ",", ".") -- V
             elseif k == "percentage"    then bat_now.percentage   = tonumber(v)              -- %
-            elseif k == "capacity"      then bat_now.capacity     = string.gsub(v, ",", ".") -- %
-            elseif k == "icon-name"     then bat_now.icon         = v
             elseif k == "time to empty" then bat_now.timeleft     = v
             end
         end
