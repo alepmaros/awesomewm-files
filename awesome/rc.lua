@@ -142,6 +142,7 @@ table.insert(naughty.dbus.config.mapping, {{appname = "Spotify"}, naughty.config
 markup = lain.util.markup
 
 mybattery_icon = wibox.widget.imagebox(beautiful.widget_batt)
+mybattery_notification = nil
 mybattery = lain.widgets.abase({
     cmd = "upower -d | sed -n '/present/,/icon-name/p'",
     settings = function()
@@ -158,7 +159,7 @@ mybattery = lain.widgets.abase({
             icon         = "N/A"
         }
 
-        for k, v in string.gmatch(output, '([%a]+[%a|-]+):%s*([%a|%d]+[,|%a|%d]-)') do
+        for k, v in string.gmatch(output, '([%a]+[%s|-|%a+]+):%s*([%a|%d]+[,|%a|%d|]*).-\n') do
             if     k == "present"       then bat_now.present      = v
             elseif k == "state"         then bat_now.state        = v
             elseif k == "warning-level" then bat_now.warninglevel = v
@@ -169,10 +170,10 @@ mybattery = lain.widgets.abase({
             elseif k == "percentage"    then bat_now.percentage   = tonumber(v)              -- %
             elseif k == "capacity"      then bat_now.capacity     = string.gsub(v, ",", ".") -- %
             elseif k == "icon-name"     then bat_now.icon         = v
+            elseif k == "time to empty" then bat_now.timeleft     = v
             end
         end
 
-        
         bat_colour = ""
         if bat_now.state == "charging" then
             bat_colour = "#4d94ff"
@@ -182,15 +183,31 @@ mybattery = lain.widgets.abase({
             else
                 bat_colour = "#33cc33"
             end
-       end
+        end
 
-       widget:set_markup(markup(bat_colour, bat_now.percentage .. "% " .. bat_now.state))
+        widget:set_markup(markup(bat_colour, bat_now.percentage .. "% " .. bat_now.state ))
+        mybattery:connect_signal('mouse::enter', 
+            function ()
+                if (mybattery_notification == nil) then
+                    mybattery_notification = naughty.notify( { text = bat_now.timeleft .. " hours left"} )
+                end
+            end)
+
+        mybattery:connect_signal('mouse::leave', 
+            function ()
+                naughty.destroy(mybattery_notification)
+                mybattery_notification = nil
+            end)
+
     end
 })
 
-
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
+--require("calendar2")
+--calendar2.addCalendarToWidget(mytextclock)
+
+lain.widgets.calendar.attach(mytextclock)
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = awful.util.table.join(
@@ -255,10 +272,10 @@ awful.screen.connect_for_each_screen(function(s)
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
-    local names = { "www", "term1", "term2", "message", "music", "6", "7", "8", "9" }
+    local names = { "www", "term1", "term2", "message", "music", "float1", "float2", "8", "9" }
     local l = awful.layout.suit
     local layouts = { l.tile, l.tile, l.tile, l.tile, l.tile,
-        l.tile, l.tile, l.tile, l.tile }
+        l.floating, l.floating, l.tile, l.tile }
     awful.tag(names, s, layouts)
 
     -- Create a promptbox for each screen
@@ -551,8 +568,9 @@ awful.rules.rules = {
 
     -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" }
-      }, properties = { titlebars_enabled = true }
+      }, properties = { titlebars_enabled = false}
     },
+
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },
@@ -593,7 +611,7 @@ client.connect_signal("request::titlebars", function(c)
 
     awful.titlebar(c) : setup {
         { -- Left
-            awful.titlebar.widget.iconwidget(c),
+            awffloat2l.titlebar.widget.iconwidget(c),
             buttons = buttons,
             layout  = wibox.layout.fixed.horizontal
         },
