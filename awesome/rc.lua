@@ -144,7 +144,7 @@ markup = lain.util.markup
 mybattery_icon = wibox.widget.imagebox(beautiful.widget_batt)
 mybattery_notification = nil
 mybattery = lain.widgets.abase({
-    cmd = "upower -d | sed -n '/present/,/icon-name/p'",
+    cmd = "upower -i /org/freedesktop/UPower/devices/battery_BAT0 | sed -n '/present/,/icon-name/p'",
     settings = function()
         local bat_now = {
             present      = "N/A",
@@ -156,14 +156,17 @@ mybattery = lain.widgets.abase({
             voltage      = "N/A",
             percentage   = "N/A",
             capacity     = "N/A",
-            icon         = "N/A"
+            icon         = "N/A",
+            timeleft     = "N/A"
         }
 
-        for k, v in string.gmatch(output, '([%a]+[%s|-|%a+]+):%s*([%a|%d]+[,|%a|%d|]*).-\n') do
+        for k,v in string.gmatch(output, '%s*([%a|-|%s]+):%s*([%a|%d|,|%s|%%]+)\n') do
+            --awful.spawn.with_shell("echo '" .. k .. "-" .. v ..  "' >> /home/apm/ccc.debug")
             if     k == "present"       then bat_now.present      = v
             elseif k == "state"         then bat_now.state        = v
-            elseif k == "percentage"    then bat_now.percentage   = tonumber(v)              -- %
+            elseif k == "percentage"    then bat_now.percentage   = tonumber(v:sub(1,-2))              -- %
             elseif k == "time to empty" then bat_now.timeleft     = v
+            elseif k == "time to full"  then bat_now.timeleft     = v 
             end
         end
 
