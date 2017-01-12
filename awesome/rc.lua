@@ -208,7 +208,7 @@ mytextclock = wibox.widget.textclock()
 
 lain.widgets.calendar.attach(mytextclock)
 
--- Create a wibox for each screen and add it
+-- Create wibox for each screen and add it
 local taglist_buttons = awful.util.table.join(
                     awful.button({ }, 1, function(t) t:view_only() end),
                     awful.button({ modkey }, 1, function(t)
@@ -310,6 +310,7 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
             wibox.widget.systray(),
+            diskwidget,
             mybattery_icon,
             mybattery,
             mytextclock,
