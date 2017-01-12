@@ -159,9 +159,9 @@ mybattery = lain.widgets.abase({
             icon         = "N/A",
             timeleft     = "N/A"
         }
+        
 
-        for k,v in string.gmatch(output, '%s*([%a|-|%s]+):%s*([%a|%d|,|%s|%%]+)\n') do
-            --awful.spawn.with_shell("echo '" .. k .. "-" .. v ..  "' >> /home/apm/ccc.debug")
+        for k,v in string.gmatch(output, '%s*([%a|-|%s]+):%s*([%a|%d|,|%s|%%|-]+)\n') do
             if     k == "present"       then bat_now.present      = v
             elseif k == "state"         then bat_now.state        = v
             elseif k == "percentage"    then bat_now.percentage   = tonumber(v:sub(1,-2))              -- %
@@ -170,38 +170,41 @@ mybattery = lain.widgets.abase({
             end
         end
 
-        bat_colour = ""
+        bat_colour = "#33cc33"
         if bat_now.state == "charging" then
             bat_colour = "#4d94ff"
-        else
+        elseif bat_now.state == "discharging" then
             if bat_now.percentage < 50 then
                 bat_colour = "#ff1a1a"
             else
                 bat_colour = "#33cc33"
             end
         end
-
-        widget:set_markup(markup(bat_colour, bat_now.percentage .. "% " .. bat_now.state ))
-        mybattery:connect_signal('mouse::enter', 
+        
+        if bat_now.state ~= "fully-charged" then
+            mybattery:connect_signal('mouse::enter', 
             function ()
                 if (mybattery_notification == nil) then
-                    mybattery_notification = naughty.notify( { text = bat_now.timeleft .. " hours left"} )
+                    mybattery_notification = naughty.notify( { text = bat_now.timeleft } )
                 end
             end)
+        end
 
         mybattery:connect_signal('mouse::leave', 
-            function ()
+        function ()
+            if mybattery_notification ~= nil then
                 naughty.destroy(mybattery_notification)
                 mybattery_notification = nil
-            end)
+            end
+        end)
 
+
+        widget:set_markup(markup(bat_colour, bat_now.percentage .. "% " .. bat_now.state )) 
     end
 })
 
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
---require("calendar2")
---calendar2.addCalendarToWidget(mytextclock)
 
 lain.widgets.calendar.attach(mytextclock)
 
@@ -270,7 +273,7 @@ awful.screen.connect_for_each_screen(function(s)
     -- Each screen has its own tag table.
     local names = { "www", "term1", "term2", "message", "music", "float1", "float2", "8", "9" }
     local l = awful.layout.suit
-    local layouts = { l.tile, l.tile, l.tile, l.tile, l.tile,
+    local layouts = { l.floating, l.tile, l.tile, l.tile, l.tile,
         l.floating, l.floating, l.tile, l.tile }
     awful.tag(names, s, layouts)
 
