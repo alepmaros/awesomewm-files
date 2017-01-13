@@ -3,6 +3,11 @@
 echo "awesomewm setup"
 echo "Creating symlinks..."
 
+if ! [[ -d $HOME/config ]]; then
+    echo ".config not found. Creating directory"
+    mkdir $HOME/.config
+fi
+
 if ! [[ -d $HOME/.config/awesome ]]; then
     ln -s `pwd`/awesome $HOME/.config/awesome
 fi

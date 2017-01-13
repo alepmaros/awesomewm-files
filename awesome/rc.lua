@@ -47,7 +47,7 @@ end
 beautiful.init("/home/apm/.config/awesome/voyager/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "gnome-terminal"
+terminal = "xterm"
 editor = os.getenv("EDITOR") or "nano"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -140,7 +140,6 @@ table.insert(naughty.dbus.config.mapping, {{appname = "Spotify"}, naughty.config
 -- {{{ Wibar
 
 markup = lain.util.markup
-
 mybattery_icon = wibox.widget.imagebox(beautiful.widget_batt)
 mybattery_notification = nil
 mybattery = lain.widgets.abase({
@@ -161,7 +160,7 @@ mybattery = lain.widgets.abase({
         }
         
 
-        for k,v in string.gmatch(output, '%s*([%a|-|%s]+):%s*([%a|%d|,|%s|%%|-]+)\n') do
+        for k,v in string.gmatch(output, '%s*([%a|-|%s]+):%s*([%a|%d|.|%s|%%]+)\n') do
             if     k == "present"       then bat_now.present      = v
             elseif k == "state"         then bat_now.state        = v
             elseif k == "percentage"    then bat_now.percentage   = tonumber(v:sub(1,-2))              -- %
@@ -310,8 +309,6 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
             wibox.widget.systray(),
-            diskwidget,
-            mybattery_icon,
             mybattery,
             mytextclock,
             s.mylayoutbox,

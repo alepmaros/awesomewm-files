@@ -11,7 +11,7 @@ theme.wallpaper = theme.confdir .. "/macOS-Sierra-Wallpaper.jpg"
 -- }}}
 
 -- {{{ Styles
-theme.font      = "Tamsyn 9"
+theme.font      = "Misc Tamsyn 9"
 
 -- {{{ Colors
 theme.fg_normal  = "#DCDCCC"
