@@ -109,9 +109,6 @@ mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesom
                                   }
                         })
 
-mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
-                                     menu = mymainmenu })
-
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
@@ -120,7 +117,6 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 mykeyboardlayout = awful.widget.keyboardlayout()
 
 --- {{{ Naughty
-
 
 -- Changing spotify notifications.
 naughty.config.presets.spotify = { 
@@ -140,6 +136,8 @@ table.insert(naughty.dbus.config.mapping, {{appname = "Spotify"}, naughty.config
 -- {{{ Wibar
 
 markup = lain.util.markup
+separators = lain.util.separators
+
 mybattery_icon = wibox.widget.imagebox(beautiful.widget_batt)
 mybattery_notification = nil
 mybattery = lain.widgets.abase({
@@ -203,10 +201,49 @@ mybattery = lain.widgets.abase({
     end
 })
 
+-- CPU
+cpuicon = wibox.widget.imagebox(beautiful.widget_cpu)
+cpuwidget = lain.widgets.cpu({
+    timeout = 4,
+    settings = function()
+        widget:set_text(" " .. cpu_now.usage .. "% ")
+    end
+})
+
+-- MEM
+memicon = wibox.widget.imagebox(beautiful.widget_mem)
+memwidget = lain.widgets.mem({
+    timeout = 4,
+    settings = function()
+        widget:set_text(" " .. mem_now.used .. "MB ")
+    end
+})
+
+-- ALSA volume
+volicon = wibox.widget.imagebox(beautiful.widget_vol)
+volwidget = lain.widgets.alsa({
+    settings = function()
+        if volume_now.status == "off" then
+            volicon:set_image(beautiful.widget_vol_mute)
+        elseif tonumber(volume_now.level) == 0 then
+            volicon:set_image(beautiful.widget_vol_no)
+        elseif tonumber(volume_now.level) <= 50 then
+            volicon:set_image(beautiful.widget_vol_low)
+        else
+            volicon:set_image(beautiful.widget_vol)
+        end
+
+        widget:set_text(" " .. volume_now.level .. "% ")
+    end
+})
+
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
-
 lain.widgets.calendar.attach(mytextclock)
+
+spr = wibox.widget.textbox(' ')
+arrl_dl = separators.arrow_left(beautiful.bg_focus, "alpha")
+arrl_ld = separators.arrow_left("alpha", beautiful.bg_focus)
 
 -- Create wibox for each screen and add it
 local taglist_buttons = awful.util.table.join(
@@ -301,7 +338,6 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
-            mylauncher,
             s.mytaglist,
             s.mypromptbox,
         },
@@ -310,7 +346,18 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
             wibox.widget.systray(),
-            mybattery,
+            memicon,
+            memwidget,
+            arrl_ld,
+            wibox.container.background(cpuicon, beautiful.bg_focus),
+            wibox.container.background(cpuwidget, beautiful.bg_focus),
+            arrl_dl,
+            volicon,
+            volwidget,
+            arrl_ld,
+            wibox.container.background(mybattery_icon, beautiful.bg_focus),
+            wibox.container.background(mybattery, beautiful.bg_focus),
+            arrl_dl,
             mytextclock,
             s.mylayoutbox,
         },

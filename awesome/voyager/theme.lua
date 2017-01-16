@@ -130,7 +130,14 @@ theme.titlebar_maximized_button_normal_inactive = theme.confdir .. "/titlebar/ma
 -- }}}
 
 --- {{{ Custom Widgets
-theme.widget_batt = theme.confdir .. "/icons/bat.png"
+theme.widget_batt       = theme.confdir .. "/icons/bat.png"
+theme.widget_cpu        = theme.confdir .. "/icons/cpu.png"
+theme.widget_mem        = theme.confdir .. "/icons/mem.png"
+theme.widget_vol        = theme.confdir .. "/icons/vol.png"
+theme.widget_vol_low    = theme.confdir .. "/icons/vol_low.png"
+theme.widget_vol_no     = theme.confdir .. "/icons/vol_no.png"
+theme.widget_vol_mute   = theme.confdir .. "/icons/vol_mute.png"
+
 --- }}}
 --
 return theme
