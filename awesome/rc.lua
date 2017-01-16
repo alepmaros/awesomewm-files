@@ -127,7 +127,9 @@ naughty.config.presets.spotify = {
 
     -- Adjust the size of the notification
     height = 100,
-    width  = 400
+    width  = 400,
+    -- Guessing the value, find a way to fit it to the proper size later
+    icon_size = 90
 }
 table.insert(naughty.dbus.config.mapping, {{appname = "Spotify"}, naughty.config.presets.spotify})
 
