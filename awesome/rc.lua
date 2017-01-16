@@ -138,6 +138,12 @@ table.insert(naughty.dbus.config.mapping, {{appname = "Spotify"}, naughty.config
 markup = lain.util.markup
 separators = lain.util.separators
 
+-- Battery Widget
+-- This widget is not fully tested because my battery/bios/motherboard are not working properly.
+-- /sys/class/power_supply/BAT0/current_now does not appear and therefore several tools that
+-- use that information dont work properly. The only thing that got it working was upower, and even
+-- that is not fully function (it often says that its charging even when it is not, etc) so this widget
+-- will probably change  alot overtime.
 mybattery_icon = wibox.widget.imagebox(beautiful.widget_batt)
 mybattery_notification = nil
 mybattery = lain.widgets.abase({
