@@ -486,7 +486,20 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "Print", function () awful.util.spawn("scrot -e 'mv $f ~/screenshots/ 2>/dev/null'") end),
 
     -- Lock Screen
-    awful.key({ modkey, "Shift" }, "l", function () awful.util.spawn("xscreensaver-command -lock") end)
+    awful.key({ modkey, "Shift" }, "p", function () awful.util.spawn("xscreensaver-command -lock") end),
+
+    -- Volume Up/Down
+    awful.key({ }, "#122", 
+            function()
+                awful.util.spawn("amixer sset Master 5%-") 
+                volwidget.update()
+            end),
+
+    awful.key({ }, "#123", 
+            function()
+                awful.util.spawn("amixer sset Master 5%+") 
+                volwidget.update()
+            end)
 )
 
 clientkeys = awful.util.table.join(
