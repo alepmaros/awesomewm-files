@@ -245,6 +245,18 @@ volwidget = lain.widgets.alsa({
     end
 })
 
+-- Net
+neticon = wibox.widget.imagebox(beautiful.widget_net)
+neticon:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn_with_shell(iptraf) end)))
+netwidget = lain.widgets.net({
+    settings = function()
+        widget:set_markup(markup("#7AC82E", " " .. net_now.received)
+                          .. " " ..
+                          markup("#46A8C3", " " .. net_now.sent .. " "))
+    end
+})
+
+
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
 lain.widgets.calendar.attach(mytextclock)
@@ -354,6 +366,10 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
             wibox.widget.systray(),
+            arrl_ld,
+            wibox.container.background(neticon, beautiful.bg_focus),
+            wibox.container.background(netwidget, beautiful.bg_focus),
+            arrl_dl,
             memicon,
             memwidget,
             arrl_ld,

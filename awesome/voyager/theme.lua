@@ -137,6 +137,7 @@ theme.widget_vol        = theme.confdir .. "/icons/vol.png"
 theme.widget_vol_low    = theme.confdir .. "/icons/vol_low.png"
 theme.widget_vol_no     = theme.confdir .. "/icons/vol_no.png"
 theme.widget_vol_mute   = theme.confdir .. "/icons/vol_mute.png"
+theme.widget_net        = theme.confdir .. "/icons/net.png"
 
 --- }}}
 --
