@@ -245,6 +245,53 @@ volwidget = lain.widgets.alsa({
     end
 })
 
+-- Put this function elsewhere later
+audioOutputMenu = nil
+function updateAudioOutputMenu()
+    local handle = io.popen("pacmd list-sinks | sed -n '/index/s/^ *//p;/alsa.card_name/s/^[ \t]*//p'")
+    local result = handle:read("*all")
+    handle:close()
+
+    cards = { }
+
+    for k,v in string.gmatch(result, 'index:%s*(%d+)\nalsa.card_name = "(%a+[%s|%a|%d]*)"') do
+        table.insert( cards, {k, v} )
+    end
+
+    audioOutputMenu = awful.menu()
+    for i,j in pairs(cards) do
+        audioOutputMenu:add( { j[2], 
+                function()
+                    local sink_inputs = { }
+                    awful.spawn('pacmd set-default-sink ' .. j[1])
+                    volwidget:update()
+
+                    local handle = io.popen("pacmd list-sink-inputs | sed -n '/index/s/^[ \t]*//p'")
+                    local result = handle:read("*all")
+                    handle:close()
+
+                    for k in string.gmatch(result, 'index:%s*(%d+)') do
+                        table.insert(sink_inputs, k)
+                    end
+
+                    for k,v in pairs(sink_inputs) do
+                        awful.spawn('pacmd move-sink-input ' .. v .. ' ' .. j[1])
+                    end
+                end })
+    end
+end
+
+volicon:buttons(awful.util.table.join(awful.button({ }, 1, function()
+                                            -- find a better way to deal with this later.
+                                            if audioOutputMenu ~= nil then
+                                                audioOutputMenu:toggle()
+                                                audioOutputMenu = nil
+                                            else
+                                                updateAudioOutputMenu()
+                                                audioOutputMenu:toggle()
+                                            end
+                                        end)))
+
 -- Net
 neticon = wibox.widget.imagebox(beautiful.widget_net)
 neticon:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn_with_shell(iptraf) end)))
