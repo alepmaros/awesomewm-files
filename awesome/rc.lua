@@ -190,20 +190,15 @@ mybattery = lain.widget.watch({
         
         if bat_now.state ~= "fully-charged" then
             mybattery.widget:connect_signal('mouse::enter', 
-            function ()
-                if (mybattery_notification == nil) then
-                    mybattery_notification = naughty.notify( { text = bat_now.timeleft } )
-                end
-            end)
+                    function ()
+                        mybattery_notification = naughty.notify( { text = bat_now.timeleft } )
+                    end)
         end
 
         mybattery.widget:connect_signal('mouse::leave', 
-        function ()
-            if mybattery_notification ~= nil then
-                naughty.destroy(mybattery_notification)
-                mybattery_notification = nil
-            end
-        end)
+                function ()
+                    naughty.destroy(mybattery_notification)
+                end)
 
 
         widget:set_markup(markup(bat_colour, bat_now.percentage .. "% " .. bat_now.state )) 
