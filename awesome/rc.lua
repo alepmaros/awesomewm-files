@@ -149,7 +149,6 @@ separators = lain.util.separators
 mybattery_icon = wibox.widget.imagebox(beautiful.widget_batt)
 mybattery_notification = nil
 mybattery = lain.widget.watch({
-    --cmd = "upower -i /org/freedesktop/UPower/devices/battery_BAT0 | sed -n '/present/,/icon-name/p'",
     cmd = { awful.util.shell, "-c", "upower -i /org/freedesktop/UPower/devices/battery_BAT0 | sed -n '/present/,/icon-name/p'" },
     timeout = 20,
     settings = function()
@@ -189,7 +188,7 @@ mybattery = lain.widget.watch({
         end
         
         if bat_now.state ~= "fully-charged" then
-            mybattery:connect_signal('mouse::enter', 
+            mybattery.widget:connect_signal('mouse::enter', 
             function ()
                 if (mybattery_notification == nil) then
                     mybattery_notification = naughty.notify( { text = bat_now.timeleft } )
@@ -197,7 +196,7 @@ mybattery = lain.widget.watch({
             end)
         end
 
-        mybattery:connect_signal('mouse::leave', 
+        mybattery.widget:connect_signal('mouse::leave', 
         function ()
             if mybattery_notification ~= nil then
                 naughty.destroy(mybattery_notification)
@@ -307,7 +306,9 @@ netwidget = lain.widget.net({
 
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
-lain.widget.calendar.attach(mytextclock)
+lain.widget.calendar({
+        attach_to = { mytextclock }
+    })
 
 spr = wibox.widget.textbox(' ')
 arrl_dl = separators.arrow_left(beautiful.bg_focus, "alpha")
