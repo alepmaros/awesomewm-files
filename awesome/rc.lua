@@ -148,9 +148,10 @@ separators = lain.util.separators
 -- will probably change  alot overtime.
 mybattery_icon = wibox.widget.imagebox(beautiful.widget_batt)
 mybattery_notification = nil
-mybattery = lain.widgets.abase({
-    cmd = "upower -i /org/freedesktop/UPower/devices/battery_BAT0 | sed -n '/present/,/icon-name/p'",
-    timeout = 10,
+mybattery = lain.widget.watch({
+    --cmd = "upower -i /org/freedesktop/UPower/devices/battery_BAT0 | sed -n '/present/,/icon-name/p'",
+    cmd = { awful.util.shell, "-c", "upower -i /org/freedesktop/UPower/devices/battery_BAT0 | sed -n '/present/,/icon-name/p'" },
+    timeout = 20,
     settings = function()
         local bat_now = {
             present      = "N/A",
@@ -211,16 +212,16 @@ mybattery = lain.widgets.abase({
 
 -- CPU
 cpuicon = wibox.widget.imagebox(beautiful.widget_cpu)
-cpuwidget = lain.widgets.cpu({
+cpuwidget = lain.widget.cpu({
     timeout = 4,
     settings = function()
-        widget:set_text(" " .. cpu_now.usage .. "% ")
+        widget:set_markup(" " .. cpu_now.usage .. "% ")
     end
 })
 
 -- MEM
 memicon = wibox.widget.imagebox(beautiful.widget_mem)
-memwidget = lain.widgets.mem({
+memwidget = lain.widget.mem({
     timeout = 4,
     settings = function()
         widget:set_text(" " .. mem_now.used .. "MB ")
@@ -229,7 +230,7 @@ memwidget = lain.widgets.mem({
 
 -- ALSA volume
 volicon = wibox.widget.imagebox(beautiful.widget_vol)
-volwidget = lain.widgets.alsa({
+volwidget = lain.widget.alsa({
     settings = function()
         if volume_now.status == "off" then
             volicon:set_image(beautiful.widget_vol_mute)
@@ -295,7 +296,7 @@ volicon:buttons(awful.util.table.join(awful.button({ }, 1, function()
 -- Net
 neticon = wibox.widget.imagebox(beautiful.widget_net)
 neticon:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn_with_shell(iptraf) end)))
-netwidget = lain.widgets.net({
+netwidget = lain.widget.net({
     settings = function()
         widget:set_markup(markup("#7AC82E", " " .. net_now.received)
                           .. " " ..
@@ -306,7 +307,7 @@ netwidget = lain.widgets.net({
 
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
-lain.widgets.calendar.attach(mytextclock)
+lain.widget.calendar.attach(mytextclock)
 
 spr = wibox.widget.textbox(' ')
 arrl_dl = separators.arrow_left(beautiful.bg_focus, "alpha")
@@ -415,19 +416,19 @@ awful.screen.connect_for_each_screen(function(s)
             wibox.widget.systray(),
             arrl_ld,
             wibox.container.background(neticon, beautiful.bg_focus),
-            wibox.container.background(netwidget, beautiful.bg_focus),
+            wibox.container.background(netwidget.widget, beautiful.bg_focus),
             arrl_dl,
             memicon,
             memwidget,
             arrl_ld,
             wibox.container.background(cpuicon, beautiful.bg_focus),
-            wibox.container.background(cpuwidget, beautiful.bg_focus),
+            wibox.container.background(cpuwidget.widget, beautiful.bg_focus),
             arrl_dl,
             volicon,
             volwidget,
             arrl_ld,
             wibox.container.background(mybattery_icon, beautiful.bg_focus),
-            wibox.container.background(mybattery, beautiful.bg_focus),
+            wibox.container.background(mybattery.widget, beautiful.bg_focus),
             arrl_dl,
             mytextclock,
             s.mylayoutbox,
