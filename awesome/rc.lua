@@ -16,6 +16,7 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 
 -- Custom library
 local lain          = require("lain")
+local radical       = require("radical")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -246,7 +247,7 @@ volwidget = lain.widget.alsa({
 })
 
 -- Put this function elsewhere later
-audioOutputMenu = nil
+audioOutputMenu = radical.context{}
 function updateAudioOutputMenu()
     local handle = io.popen("pacmd list-sinks | sed -n '/index/s/^ *//p;/alsa.card_name/s/^[ \t]*//p'")
     local result = handle:read("*all")
@@ -257,11 +258,11 @@ function updateAudioOutputMenu()
     for k,v in string.gmatch(result, 'index:%s*(%d+)\nalsa.card_name = "(%a+[%s|%a|%d]*)"') do
         table.insert( cards, {k, v} )
     end
-
-    audioOutputMenu = awful.menu()
+ 
+    audioOutputMenu:clear()
     for i,j in pairs(cards) do
-        audioOutputMenu:add( { j[2], 
-                function()
+        audioOutputMenu:add_item{ text = tostring(j[2]),
+                button1 = function(_audioOutputMenu, item, mods)
                     local sink_inputs = { }
                     awful.spawn('pacmd set-default-sink ' .. j[1])
                     volwidget:update()
@@ -277,20 +278,13 @@ function updateAudioOutputMenu()
                     for k,v in pairs(sink_inputs) do
                         awful.spawn('pacmd move-sink-input ' .. v .. ' ' .. j[1])
                     end
-                end })
+                    audioOutputMenu:hide()
+                end}
     end
+    return audioOutputMenu
 end
 
-volicon:buttons(awful.util.table.join(awful.button({ }, 1, function()
-                                            -- find a better way to deal with this later.
-                                            if audioOutputMenu ~= nil then
-                                                audioOutputMenu:toggle()
-                                                audioOutputMenu = nil
-                                            else
-                                                updateAudioOutputMenu()
-                                                audioOutputMenu:toggle()
-                                            end
-                                        end)))
+volicon:set_menu(updateAudioOutputMenu(), "button::pressed", 1)
 
 -- Net
 neticon = wibox.widget.imagebox(beautiful.widget_net)
