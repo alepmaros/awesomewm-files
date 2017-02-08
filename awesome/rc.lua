@@ -285,6 +285,7 @@ function updateAudioOutputMenu()
 end
 
 volicon:set_menu(updateAudioOutputMenu(), "button::pressed", 1)
+volwidget.widget:set_menu(updateAudioOutputMenu(), "button::pressed", 1)
 
 -- Net
 neticon = wibox.widget.imagebox(beautiful.widget_net)
