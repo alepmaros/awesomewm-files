@@ -22,4 +22,12 @@ else
     git -C `pwd`/awesome/lain/ pull
 fi
 
+if ! [[ -d `pwd`/awesome/radical ]]; then
+    echo "Cloning radical..."
+    git clone https://github.com/Elv13/radical `pwd`/awesome
+else
+    echo "Updating radical..."
+    git -C `pwd`/awesome/radical/ pull
+fi
 
+echo "Done."
