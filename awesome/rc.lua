@@ -148,26 +148,25 @@ separators = lain.util.separators
 -- that is not fully function (it often says that its charging even when it is not, etc) so this widget
 -- will probably change  alot overtime.
 mybattery_icon = wibox.widget.imagebox(beautiful.widget_batt)
-mybattery_notification = nil
+
+bat_now = {
+    present      = "N/A",
+    state        = "N/A",
+    warninglevel = "N/A",
+    energy       = "N/A",
+    energyfull   = "N/A",
+    energyrate   = "N/A",
+    voltage      = "N/A",
+    percentage   = "N/A",
+    capacity     = "N/A",
+    icon         = "N/A",
+    timeleft     = "N/A"
+}
+
 mybattery = lain.widget.watch({
     cmd = { awful.util.shell, "-c", "upower -i /org/freedesktop/UPower/devices/battery_BAT0 | sed -n '/present/,/icon-name/p'" },
     timeout = 20,
     settings = function()
-        local bat_now = {
-            present      = "N/A",
-            state        = "N/A",
-            warninglevel = "N/A",
-            energy       = "N/A",
-            energyfull   = "N/A",
-            energyrate   = "N/A",
-            voltage      = "N/A",
-            percentage   = "N/A",
-            capacity     = "N/A",
-            icon         = "N/A",
-            timeleft     = "N/A"
-        }
-        
-
         for k,v in string.gmatch(output, '(%a+[%a|%-|%s]+):%s*([%a|%d]+[%a|%d|%.|%-|%s|%%]+)\n') do
             if     k == "present"       then bat_now.present      = v
             elseif k == "state"         then bat_now.state        = v
@@ -187,23 +186,24 @@ mybattery = lain.widget.watch({
         else
             bat_colour = "#4d94ff"
         end
-        
-        if bat_now.state ~= "fully-charged" then
-            mybattery.widget:connect_signal('mouse::enter', 
-                    function ()
-                        mybattery_notification = naughty.notify( { text = bat_now.timeleft } )
-                    end)
-        end
-
-        mybattery.widget:connect_signal('mouse::leave', 
-                function ()
-                    naughty.destroy(mybattery_notification)
-                end)
-
 
         widget:set_markup(markup(bat_colour, bat_now.percentage .. "% " .. bat_now.state )) 
     end
 })
+
+mybattery_notification = nil
+mybattery.widget:connect_signal('mouse::enter', 
+        function ()
+            if bat_now.state ~= "fully-charged" and bat_now.state ~= "N/A" then
+                naughty.destroy(mybattery_notification)
+                mybattery_notification = naughty.notify( { text = bat_now.timeleft } )
+            end
+        end)
+
+mybattery.widget:connect_signal('mouse::leave', 
+        function ()
+            naughty.destroy(mybattery_notification)
+        end)
 
 -- CPU
 cpuicon = wibox.widget.imagebox(beautiful.widget_cpu)
