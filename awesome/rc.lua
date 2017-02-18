@@ -541,7 +541,7 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "Print", function () awful.util.spawn("scrot -e 'mv $f ~/screenshots/ 2>/dev/null'") end),
 
     -- Lock Screen
-    awful.key({ modkey, "Shift" }, "p", function () awful.util.spawn("xscreensaver-command -lock") end),
+    awful.key({ modkey, "Shift" }, "p", function () awful.util.spawn("i3lock") end),
 
     -- Volume Up/Down
     awful.key({ }, "#122", 
