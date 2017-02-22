@@ -541,7 +541,7 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "Print", function () awful.util.spawn("scrot -e 'mv $f ~/screenshots/ 2>/dev/null'") end),
 
     -- Lock Screen
-    awful.key({ modkey, "Shift" }, "p", function () awful.util.spawn("i3lock") end),
+    awful.key({ modkey, "Shift" }, "p", function () awful.util.spawn("i3lock -i /home/apm/images/screen_lock.png") end),
 
     -- Volume Up/Down
     awful.key({ }, "#122", 
@@ -708,7 +708,7 @@ awful.rules.rules = {
 client.connect_signal("manage", function (c)
     -- Set the windows at the slave,
     -- i.e. put it at the end of others instead of setting it master.
-    -- if not awesome.startup then awful.client.setslave(c) end
+    if not awesome.startup then awful.client.setslave(c) end
 
     if awesome.startup and
       not c.size_hints.user_position
